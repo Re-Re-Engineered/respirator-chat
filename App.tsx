@@ -1,118 +1,85 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
+import 'react-native-gesture-handler';
+import React, {ReactPropTypes} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {Text, View, Button} from 'react-native';
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
-
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import AppBar from './components/AppBar';
 
 declare const global: {HermesInternal: null | {}};
 
-const App = () => {
+const getFullName = (...args: string[]): string => args.join(' ');
+
+const Stack = createStackNavigator();
+
+type ColumnProps = {
+  children: React.ReactNode;
+};
+
+const Column = (props: ColumnProps) => {
+  const trueProps = {...props, children: null};
+  const style = {flexDirection: 'column'};
+  const {children} = props;
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <View {...style} {...trueProps}>
+      {children}
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
+type NavButtonProps = {
+  title: string;
+  style?: any;
+  onPress: any;
+};
+
+const NavButton = (props: NavButtonProps) => {
+  const {title, onPress} = props;
+  const style = props.style || {};
+  return <Button {...style} title={title} onPress={onPress} />;
+};
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <AppBar />
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+const HomeScreen = ({navigation}: any) => {
+  return (
+    <Column>
+      <Text>Hello, I am {getFullName('Arjun', 'Raju', 'Pillai')}</Text>
+      <NavButton
+        title="Go to Arjun's Profile"
+        onPress={() => navigation.navigate('Profile', {name: 'Arjun'})}
+      />
+      {/* <Button
+        title="Go to Arjun's profile"
+        onPress={() => navigation.navigate('Profile', { name: 'Arjun' })}
+      /> */}
+    </Column>
+  );
+};
+
+const ProfileScreen = ({navigation, route}: any) => {
+  return (
+    <Column>
+      <Text>This is {route.params.name}'s profile</Text>
+      <NavButton
+        title="Go back to home page"
+        onPress={() => navigation.navigate('Home')}
+      />
+    </Column>
+  );
+};
 
 export default App;
